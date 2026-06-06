@@ -32,4 +32,8 @@ pub mod anchor_core_staking {
     pub fn stake(ctx:Context<Stake>) -> Result<()> {
         stake::handler(ctx)
     }
+
+    pub fn unstake(ctx: Context<Unstake>) -> Result<()> {
+        unstake::handler(ctx)
+    }
 }
