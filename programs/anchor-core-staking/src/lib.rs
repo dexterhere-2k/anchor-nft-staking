@@ -28,4 +28,8 @@ pub mod anchor_core_staking {
     pub fn mint_asset(ctx: Context<MintAsset>, name: String, uri: String) -> Result<()> {
         mint_asset::handler(ctx, name, uri)
     }
+
+    pub fn stake(ctx:Context<Stake>) -> Result<()> {
+        stake::handler(ctx)
+    }
 }
