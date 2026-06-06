@@ -4,3 +4,4 @@ node_modules
 test-ledger
 *.log
 .DS_Store
+.anchor-core-staking
