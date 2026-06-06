@@ -24,4 +24,8 @@ pub mod anchor_core_staking {
     pub fn initialize(ctx: Context<Initialize>, rewards_bps: u16, freeze_period: u16) -> Result<()> {
         initialize::handler(ctx, rewards_bps, freeze_period)
     }
+
+    pub fn mint_asset(ctx: Context<MintAsset>, name: String, uri: String) -> Result<()> {
+        mint_asset::handler(ctx, name, uri)
+    }
 }
