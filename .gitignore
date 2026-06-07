@@ -1,7 +1,18 @@
-.anchor
-target
-node_modules
-test-ledger
+# Anchor/Solana build and test artifacts
+.anchor/
+target/
+node_modules/
+test-ledger/
 *.log
 .DS_Store
-.anchor-core-staking
+
+# Rust/Cargo artifacts
+**/*.rs.bk
+
+# Package managers and tools
+.yarn/
+.surfpool/
+yarn-error.log
+
+# Backup / reference directory
+.anchor-core-staking/

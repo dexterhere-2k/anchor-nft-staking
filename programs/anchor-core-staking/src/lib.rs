@@ -11,18 +11,18 @@ pub use constants::*;
 pub use instructions::*;
 pub use state::*;
 
-declare_id!("GonzJKpJYcQnzdhUQAkD4v4AainQkLRN6e6YVgWfwZct");
+declare_id!("BDwdkG9VFFsT21iVGjqmnRuvEJzAQiYzsHTiiLrkx5as");
 
 #[program]
 pub mod anchor_core_staking {
     use super::*;
 
-    pub fn create_collection(ctx: Context<CreateCollection>, name: String, uri: String) -> Result<()> {
-        create_collection::handler(ctx, name, uri)
-    }
-
     pub fn initialize(ctx: Context<Initialize>, rewards_bps: u16, freeze_period: u16) -> Result<()> {
         initialize::handler(ctx, rewards_bps, freeze_period)
+    }
+
+    pub fn create_collection(ctx: Context<CreateCollection>, name: String, uri: String) -> Result<()> {
+        create_collection::handler(ctx, name, uri)
     }
 
     pub fn mint_asset(ctx: Context<MintAsset>, name: String, uri: String) -> Result<()> {

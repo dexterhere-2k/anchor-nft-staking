@@ -2,8 +2,24 @@ use anchor_lang::prelude::*;
 
 #[error_code]
 pub enum ErrorCode {
+    #[msg("Invalid asset owner")]
+    InvalidOwner,
+
     #[msg("Invalid update authority")]
     InvalidUpdateAuthority,
-    #[msg("Freeze period has not elapsed")]
+
+    #[msg("Asset already staked")]
+    AlreadyStaked,
+
+    #[msg("Asset not staked")]
+    AssetNotStaked,
+
+    #[msg("Invlaid timestamp")]
+    InvalidTimestamp,
+
+    #[msg("Freeze period not elapsed")]
     FreezePeriodNotElapsed,
+
+    #[msg("Invalid rewards bps")]
+    InvalidRewardsBps,
 }
