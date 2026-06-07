@@ -1,106 +1,39 @@
-# Anchor Core Staking
+# NFT Staking (Metaplex Core + Anchor)
 
-An NFT staking program built with [Anchor](https://www.anchor-lang.com/) on Solana, using [Metaplex Core](https://developers.metaplex.com/core) (MPL Core) assets. NFTs are staked in-place using MPL Core's plugin system — the asset stays in the owner's wallet, frozen via a `FreezeDelegate` plugin, and earns token rewards proportional to staking time.
+This repository contains a Solana Anchor program for in-place NFT staking utilizing Metaplex Core (MPL Core) assets. 
 
-## How It Works
+Unlike traditional staking which transfers assets to a program-owned vault, this project stakes NFTs in-place. It utilizes MPL Core's plugin system to freeze the asset inside the user's own wallet and calculates rewards dynamically upon unstaking.
 
-Instead of transferring NFTs to a vault, this program attaches plugins directly to the asset:
+## Core Features
 
-- **Stake** — Adds an `Attributes` plugin (recording `staked=true` and `staked_at=<timestamp>`) and a `FreezeDelegate` plugin (locking the asset in the owner's wallet).
-- **Unstake** — Thaws the asset (sets `FreezeDelegate frozen=false`), resets the staking attributes, and mints reward tokens to the owner based on how long the NFT was staked.
+- **In-place Staking**: Freezes the asset within the owner's wallet using the `FreezeDelegate` plugin.
+- **Dynamic Reward Calculations**: Calculates token rewards based on daily rates (in basis points) and total elapsed days since staking.
+- **Configurable Locking**: Enforces a minimum staking duration (freeze period) before an asset can be thawed and unstaked.
 
-Rewards are calculated as:
+## Program Reference
 
-```
-rewards = staked_days * rewards_bps * 10^decimals / 10000
-```
+- **Program ID**: `BDwdkG9VFFsT21iVGjqmnRuvEJzAQiYzsHTiiLrkx5as`
+- **Key Accounts**:
+  - `Config`: Staking configuration PDA derived via `["config", collection_address]`.
+  - `Rewards Mint`: SPL Mint PDA used to pay out rewards, derived via `["rewards_mint", config_address]`.
+  - `Update Authority`: Program-owned PDA that manages the collection's update permissions, derived via `["update_authority", collection_address]`.
 
-## Program ID
+## Setup & Testing
 
-```
-BDwdkG9VFFsT21iVGjqmnRuvEJzAQiYzsHTiiLrkx5as
-```
-
-## Instructions
-
-| Instruction | Description |
-|---|---|
-| `initialize` | Creates the staking config PDA and rewards mint for a collection |
-| `create_collection` | Creates an MPL Core collection with the program's PDA as update authority |
-| `mint_asset` | Mints an MPL Core NFT into the collection |
-| `stake` | Stakes an NFT — freezes it and records the staking timestamp |
-| `unstake` | Unstakes an NFT after the freeze period — thaws it and mints rewards |
-
-## Accounts
-
-### Config (PDA: `["config", collection]`)
-| Field | Type | Description |
-|---|---|---|
-| `rewards_bps` | `u16` | Reward rate in basis points per day |
-| `freeze_period` | `u16` | Minimum staking duration in days |
-| `rewards_bump` | `u8` | Bump for the rewards mint PDA |
-| `bump` | `u8` | Bump for this config PDA |
-
-## PDAs
-
-| Seed | Description |
-|---|---|
-| `["config", collection]` | Staking config per collection |
-| `["rewards_mint", config]` | SPL token mint for staking rewards |
-| `["update_authority", collection]` | Program-owned update authority for the collection |
-
-## Prerequisites
-
-- [Rust](https://rustup.rs/)
-- [Solana CLI](https://docs.solana.com/cli/install-solana-cli-tools)
-- [Anchor CLI](https://www.anchor-lang.com/docs/installation) `0.31.1`
-- [Surfpool](https://surfpool.dev) (required for time-travel tests)
-- Node.js + Yarn
-
-## Build
-
+### Build
+Compile the smart contracts:
 ```bash
 anchor build
 ```
 
-## Test
+### Test
+Integration tests require [Surfpool](https://surfpool.dev) to simulate time travel (advancing the cluster timestamp past the freeze period):
 
-Tests use [Surfpool](https://surfpool.dev) for `surfnet_timeTravel` (advancing the validator clock to simulate the freeze period elapsing).
-
-**Terminal 1** — Start Surfpool:
-```bash
-surfpool start
-```
-
-**Terminal 2** — Run the test suite:
-```bash
-anchor test --skip-local-validator
-```
-
-### Test Results
-
-![All tests passing](.anchor-core-staking/tests.png)
-
-## Project Structure
-
-```
-programs/anchor-core-staking/src/
-├── instructions/
-│   ├── create_collection.rs  # Create MPL Core collection
-│   ├── initialize.rs         # Initialize staking config + rewards mint
-│   ├── mint_asset.rs         # Mint NFT into collection
-│   ├── stake.rs              # Stake NFT (freeze + record attributes)
-│   └── unstake.rs            # Unstake NFT (thaw + mint rewards)
-├── state/
-│   └── config.rs             # Config account struct
-├── error.rs                  # Custom error codes
-└── lib.rs                    # Program entrypoint
-tests/
-└── anchor-core-staking.ts    # Integration tests
-```
-
-## Dependencies
-
-- `anchor-lang` `0.31.1`
-- `anchor-spl` `0.31.1`
-- `mpl-core` `0.11.1`
+1. Start Surfpool in a separate terminal:
+   ```bash
+   surfpool start
+   ```
+2. Run the test suite:
+   ```bash
+   anchor test --skip-local-validator
+   ```
